@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.singulee.carschool.pojo.CartMapper">
+    <resultMap id="BaseResultMap" type="com.singulee.carschool.pojo.Cart">
+        <id column="carId" jdbcType="INTEGER" property="carid"/>
+        <result column="carNumber" jdbcType="VARCHAR" property="carnumber"/>
+        <result column="carDriverClass" jdbcType="INTEGER" property="cardriverclass"/>
+        <result column="staute" jdbcType="VARCHAR" property="staute"/>
+        <result column="cartStartDate" jdbcType="VARCHAR" property="cartstartdate"/>
+        <result column="carEndDate" jdbcType="VARCHAR" property="carenddate"/>
+        <result column="extend2" jdbcType="VARCHAR" property="extend2"/>
+    </resultMap>
+
+    <!--插入-->
+    <insert id="insert" parameterType="com.singulee.carschool.pojo.Cart">
+    insert into cart ( carNumber, carDriverClass,
+      staute, cartStartDate, carEndDate, 
+      extend2)
+    values (#{carnumber,jdbcType=VARCHAR}, #{cardriverclass,jdbcType=INTEGER},
+      #{staute,jdbcType=VARCHAR}, #{cartstartdate,jdbcType=VARCHAR}, #{carenddate,jdbcType=VARCHAR}, 
+      #{extend2,jdbcType=VARCHAR})
+  </insert>
+
+    <!--通过id查找-->
+    <select id="selectById"  parameterType="java.lang.String" resultType="com.singulee.carschool.pojo.Cart">
+        select * from cart where carId=#{carId};
+    </select>
+    <!--通过车牌查询-->
+    <select id="selectByNumber" parameterType="com.singulee.carschool.pojo.Cart" resultType="com.singulee.carschool.pojo.Cart">
+        select * from cart where carNumber=#{carnumber}
+    </select>
+
+    <!--多条件-->
+    <select id="selectByCondiction" resultType="map" parameterType="com.singulee.carschool.pojo.Cart">
+        select
+        c.carId,
+        c.carNumber,
+        c.carDriverClass,
+        c.staute,
+        c.cartStartDate ,
+        c.carEndDate,
+        c.extend2,
+        d.driverId,
+        d.driverDescription,
+        d.extend1
+        from cart c ,driver d
+        where c.carDriverClass=d.driverId
+        <if test="carnumber!=null and carnumber!=''">
+            and carNumber like concat('%',#{carnumber},'%')
+        </if>
+        <if test="cardriverclass!=null and cardriverclass!=''">
+            and carDriverClass =#{cardriverclass}
+        </if>
+        <if test="staute!=null and staute!=''">
+           and staute =#{staute}
+        </if>
+    </select>
+
+
+    <update id="update" parameterType="com.singulee.carschool.pojo.Cart">
+    update cart
+    set carNumber = #{carnumber,jdbcType=VARCHAR},
+      carDriverClass = #{cardriverclass,jdbcType=INTEGER},
+      staute = #{staute,jdbcType=VARCHAR},
+      cartStartDate = #{cartstartdate,jdbcType=VARCHAR},
+      carEndDate = #{carenddate,jdbcType=VARCHAR},
+      extend2 = #{extend2,jdbcType=VARCHAR}
+    where carId = #{carid,jdbcType=INTEGER}
+  </update>
+    <update id="updateStute" parameterType="com.singulee.carschool.pojo.Cart">
+    update cart
+    set
+      staute = #{staute,jdbcType=VARCHAR}
+    where carId = #{carid,jdbcType=INTEGER}
+  </update>
+</mapper>
